@@ -3,40 +3,59 @@ GET http://localhost:8080/users
 Accept: application/json
 Content-Type: application/json
 
-### Get User
+### Get user
 GET http://localhost:8080/users/1
 Content-Type: application/json
 Accept: application/json
 
-### Add User
+### Add user
 POST http://localhost:8080/users
 Content-Type: application/json
 Accept: application/json
 
 {
-  "login": "loginTest",
-  "password": "passwordTest",
-  "userRoles": ["ADMIN"]
+  "login": "loginTestA",
+  "password": "passwordTestA",
+  "userRoles": ["USER"]
 }
 
-### Update User
-PUT http://localhost:8080/users/1
+### Update user
+PUT http://localhost:8080/users
 Content-Type: application/json
 Accept: application/json
 
 {
+  "idUser": 1,
   "login": "loginUpdate",
   "password": "passwordUpdate",
-  "userRoles": ["USER"]
+  "userRoles": ["ADMIN"]
 }
 
-### Delete User
+### Delete user
 DELETE http://localhost:8080/users/1
 Content-Type: application/json
 Accept: application/json
 
-###
-POST http://localhost:8080/users/2/roles
+### Delete chosen user
+DELETE http://localhost:8080/users
+Content-Type: application/json
+Accept: application/json
+
+{
+  "idUser": 1
+ }
+
+### Add role to user
+POST http://localhost:8080/users/1/roles
+Content-Type: application/json
+Accept: application/json
+
+{
+  "role": "ADMIN"
+}
+
+### Delete role from user
+DELETE http://localhost:8080/users/roles?id=1
 Content-Type: application/json
 Accept: application/json
 

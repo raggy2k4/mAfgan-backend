@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,43 +27,41 @@ public class UserController {
     private final UserService userService;
     private final UserMapper userMapper;
 
-    //TODO UserEntity -> UserDto -> wysyłam przez Mapper do serwisu, usunuć metody po zrobieniu mappera z UserEntity
-    //TODO Dodaj endpoint do dodawania roli
     @GetMapping
     public ResponseEntity<List<UserDto>> getAllUser() {
-        List<UserDto> userDtoList = userService.findAllUser().stream()
-                .map(userMapper::toDto)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(userDtoList);
+        return ResponseEntity.ok(userMapper.toListDto(userService.findAll()));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getUserById(@PathVariable Long id) {
-        User user = userService.findUserById(id);
+        User user = userService.findById(id);
         return ResponseEntity.ok(userMapper.toDto(user));
     }
 
     @PostMapping()
-    public ResponseEntity<UserDto> addUsers(@RequestBody User newUser) {
-        User user = userService.addUser(newUser);
+    public ResponseEntity<UserDto> addUsers(@RequestBody UserDto newUser) {
+        User user = userService.add(userMapper.toDomain(newUser));
         return ResponseEntity.ok(userMapper.toDto(user));
     }
-
-    @PutMapping(path = "/{id}")
-    public ResponseEntity<UserDto> updateUser(
-            @PathVariable Long id,
-            @RequestBody User userUpdate
-    ) {
-       User userToUpdate = userService.updateUser(id, userUpdate);
+    @PutMapping()
+    public ResponseEntity<UserDto> updateUser(@RequestBody UserDto userUpdate) {
+       User userToUpdate = userService.update(userMapper.toDomain(userUpdate));
        return ResponseEntity.ok(userMapper.toDto(userToUpdate));
     }
 
     @DeleteMapping(path = "/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        userService.deleteUser(id);
-//        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        userService.deleteById(id);
         return ResponseEntity
-                .accepted()
+                .noContent()
+                .build();
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Void> deleteChosenUser(@RequestBody UserDto deleteUser) {
+        userService.delete(userMapper.toDomain(deleteUser));
+        return ResponseEntity
+                .noContent()
                 .build();
     }
 
@@ -74,5 +72,14 @@ public class UserController {
     ) {
         userService.addRoleToUser(id, addRoleRequest.role);
         return ResponseEntity.ok("Dodano role");
+    }
+
+    @DeleteMapping(value = "/roles")
+    public ResponseEntity<String> deleteRole(
+            @RequestParam Long id,
+            @RequestBody AddRoleRequest addRoleRequest
+    ) {
+        userService.deleteRoleInUser(id, addRoleRequest.role);
+        return ResponseEntity.ok("Usunięto role!");
     }
 }

@@ -25,11 +25,11 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long idUser;
-    @Column(name = "LOGIN")
+    @Column(name = "login")
     private String login;
-    @Column(name = "PASSWORD")
+    @Column(name = "password")
     private String password;
-    @Column(name = "ROLES")
+    @Column(name = "roles")
     @ElementCollection
     private Set<UserRole> userRoles = new HashSet<>();
 
@@ -39,7 +39,7 @@ public class User {
         }
     }
 
-    public void removeRole(final UserRole userRole) {
+    public void deleteRole(final UserRole userRole) {
         if (this.userRoles.contains(userRole)) {
             this.userRoles.remove(userRole);
         }
