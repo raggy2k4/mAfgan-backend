@@ -1,6 +1,7 @@
-package com.example.mafgan.external.model;
+package com.example.mafgan.external.user;
 
 
+import com.example.mafgan.domain.user.Role;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
@@ -22,7 +23,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Table(name = "users")
 @Entity
-public class User {
+public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -33,7 +34,19 @@ public class User {
     @Column(name = "PASSWORD")
     private String password;
 
-    @Column(name = "RULES")
+    @Column(name = "ROLES")
     @ElementCollection
-    private Set<String> roles =  new HashSet<>();
+    private Set<Role> roles = new HashSet<>();
+
+    public void addRole(final Role role) {
+        if (!this.roles.contains(role)) {
+            this.roles.add(role);
+        }
+    }
+
+    public void removeRole(final Role role) {
+        if (this.roles.contains(role)) {
+            this.roles.remove(role);
+        }
+    }
 }

@@ -6,15 +6,20 @@ spring:
     password: postgres27
   jpa:
     hibernate:
-        ddl-auto: update
-    show-sql: true
+      ddl-auto: create-drop #mała kontrola przy tworzeniu bazy danych
+    show-sql: true #show the sql actions in the terminal logs
     properties:
       hibernate:
         format_sql: true
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
+  #    properties:
+  #      hibernate:
+  #        dialect: org.hibernate.dialect.PostgreSQLDialect
+  #    defer-datasource-initialization: true #oczytuje sql
   flyway:
     baseline-on-migrate: true
     enabled: true
     locations: classpath:db/migration
+    #    baseline-description: "init"
     baseline-version: 0
