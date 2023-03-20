@@ -1,44 +1,41 @@
 package com.example.mafgan.domain.user;
 
-import com.example.mafgan.external.user.UserEntity;
-import com.example.mafgan.external.user.UserEntityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
 public class UserService {
-    private final UserEntityRepository userEntityRepository;
+    private final UserRepository userRepository;
 
-    public List<UserEntity> findAllUser() {
-        return userEntityRepository.findAll();
+    public List<User> findAllUser() {
+        return userRepository.findAll();
     }
 
-    public UserEntity findUserById(Long id) {
-        return userEntityRepository.findById(id).orElse(null);
+    public User findUserById(Long id) {
+        return userRepository.findById(id).orElse(null);
     }
 
-    public UserEntity addUser(UserEntity userEntity) {
-        return userEntityRepository.save(userEntity);
+    public User addUser(User user) {
+        return userRepository.save(user);
     }
 
-    public UserEntity updateUser(
+    public User updateUser(
             Long id,
-            UserEntity userEntity
+            User toUpdate
     ) {
-        userEntity.setId(id);
-        return userEntityRepository.save(userEntity);
+        toUpdate.setIdUser(id);
+        return userRepository.save(toUpdate);
     }
 
     public void deleteUser(Long id) {
-        userEntityRepository.deleteById(id);
+        userRepository.deleteById(id);
     }
 
     public void addRoleToUser(Long id, String role) {
-        UserEntity user = userEntityRepository.findById(id).get();
-        user.addRole(Role.valueOf(role));
+        User user = userRepository.findById(id).get();
+        user.addRole(UserRole.valueOf(role));
     }
 }
