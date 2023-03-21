@@ -1,7 +1,6 @@
--- CREATE TABLE if NOT EXISTS stupit(
---    id int NOT NULL AUTO_INCREMENT,
---    login varchar(25),
---    password varchar(25)
---    roles varchar
---    PRIMARY KEY (id)
--- );
+CREATE TABLE IF NOT EXISTS users(
+   id_user BIGSERIAL NOT NULL PRIMARY KEY,
+   login varchar(25) NOT NULL,
+   password varchar(25) NOT NULL,
+   roles smallint NOT NULL
+);
