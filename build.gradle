@@ -3,7 +3,7 @@ plugins {
     id 'org.springframework.boot' version '3.0.4'
     id 'io.spring.dependency-management' version '1.1.0'
     id 'org.flywaydb.flyway' version '9.8.1'
-//    id 'net.ltgt.apt-idea' version '0.21'
+    id 'idea'
 }
 
 group = 'com.example'
@@ -50,7 +50,7 @@ dependencies {
     //mapstruct
     implementation "org.mapstruct:mapstruct:${mapstructVersion}"
     annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
-    annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
+    annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:'
 }
 
 tasks.named('test') {
