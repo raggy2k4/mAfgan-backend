@@ -1,5 +1,4 @@
-package com.example.mafgan.external.model;
-
+package com.example.mafgan.domain.user;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -25,15 +24,24 @@ import java.util.Set;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-
-    @Column(name = "LOGIN")
+    private Long idUser;
+    @Column(name = "login")
     private String login;
-
-    @Column(name = "PASSWORD")
+    @Column(name = "password")
     private String password;
-
-    @Column(name = "RULES")
+    @Column(name = "roles")
     @ElementCollection
-    private Set<String> roles =  new HashSet<>();
+    private Set<UserRole> userRoles = new HashSet<>();
+
+    public void addRole(final UserRole userRole) {
+        if (!this.userRoles.contains(userRole)) {
+            this.userRoles.add(userRole);
+        }
+    }
+
+    public void deleteRole(final UserRole userRole) {
+        if (this.userRoles.contains(userRole)) {
+            this.userRoles.remove(userRole);
+        }
+    }
 }

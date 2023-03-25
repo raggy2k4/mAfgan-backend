@@ -2,6 +2,8 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.0.4'
     id 'io.spring.dependency-management' version '1.1.0'
+    id 'org.flywaydb.flyway' version '9.8.1'
+    id 'idea'
 }
 
 group = 'com.example'
@@ -16,18 +18,60 @@ configurations {
 
 repositories {
     mavenCentral()
+    mavenLocal()
+}
+
+ext {
+    mapstructVersion = "1.5.3.Final"
 }
 
 dependencies {
+    //springframework
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    //flyway
     implementation 'org.flywaydb:flyway-core:9.8.1'
-    compileOnly 'org.projectlombok:lombok'
+
+    //postgresql
     runtimeOnly 'org.postgresql:postgresql'
+
+    //lombok
+    compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
+
+    //test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.mockito:mockito-junit-jupiter:5.1.1'
+    testImplementation 'org.mockito:mockito-core:5.2.0'
+    // If we are using mapstruct in test code
+    testAnnotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
+
+    //mapstruct
+    implementation "org.mapstruct:mapstruct:${mapstructVersion}"
+    annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
+    annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:'
 }
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+//tasks.withType(JavaCompile).configureEach {
+//    options.compilerArgs = [
+//            '-Amapstruct.suppressGeneratorTimestamp=true'
+//    ]
+//}
+
+flyway {
+    driver = 'org.postgresql.Driver'
+    url = 'jdbc:postgresql://localhost:5432/postgres'
+    user = 'postgres'
+    password = 'postgres27'
+    locations = ['classpath:db/migration', 'filesystem:src/main/resources/db/migration']
+//    schemas = ['schema1', 'schema2', 'schema3']
+//    placeholders = [
+//            'keyABC': 'valueXYZ',
+//            'otherplaceholder': 'value123'
+//    ]
 }
