@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.util.List;
 import java.util.Set;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -33,13 +34,41 @@ class UserControllerTest {
     private ObjectMapper objectMapper;
 
     @Test
+    void shouldAddUsers() throws Exception {
+        //given
+        final User user = new User(4L, "loginADMIN", "passwordADMIN", Set.of(UserRole.ADMIN));
+        userRepository.save(user);
+        String requestJson = objectMapper.writeValueAsString(user);
+
+        //when
+        final var response = mockMvc
+                .perform(MockMvcRequestBuilders
+                        .post("/users")
+                        .contentType("application/json")
+                        .accept("application/json")
+                        .content(requestJson)
+                )
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        final var userFormDBInJSON = response.andReturn().getResponse().getContentAsString();
+        User responseBody = objectMapper.readValue(userFormDBInJSON, new TypeReference<>() {
+        });
+
+        //then
+        assertEquals(user.getIdUser(), responseBody.getIdUser());
+        assertEquals(user.getLogin(), responseBody.getLogin());
+        assertEquals(user.getPassword(), responseBody.getPassword());
+        assertEquals(user.getUserRoles(), responseBody.getUserRoles());
+    }
+
+    @Test
     void shouldGetAllUser() throws Exception {
         //given
-        List<User> userList = List.of(
+        final List<User> userList = List.of(
                 new User(1L, "loginADMIN", "passwordADMIN", Set.of(UserRole.ADMIN)),
                 new User(2L, "loginUSER", "passwordUSER", Set.of(UserRole.USER))
         );
-
         userRepository.saveAll(userList);
 
         //when
@@ -52,7 +81,7 @@ class UserControllerTest {
                 .andExpect(status().isOk());
 
         final var userFormDBInJSON = response.andReturn().getResponse().getContentAsString();
-        List<UserDto> responseBody = objectMapper.readValue(userFormDBInJSON, new TypeReference<>() {
+        List<User> responseBody = objectMapper.readValue(userFormDBInJSON, new TypeReference<>() {
         });
 
         //then
@@ -70,16 +99,13 @@ class UserControllerTest {
     @Test
     void shouldFindUserById() throws Exception {
         //given
-        var SOME_ID = 1L;
-        User user = new User( //todo final?
-                1L, "loginADMIN", "passwordADMIN", Set.of(UserRole.ADMIN)
-        );
-
+        var userIdToFind = 1L;
+        final User user = new User(1L, "loginADMIN", "passwordADMIN", Set.of(UserRole.ADMIN));
         userRepository.save(user);
 
         //when
         final var response = mockMvc
-                .perform(MockMvcRequestBuilders.get("/users/" + SOME_ID)
+                .perform(MockMvcRequestBuilders.get("/users/" + userIdToFind)
                         .contentType("application/json")
                         .accept("application/json")
                 )
@@ -87,7 +113,7 @@ class UserControllerTest {
                 .andExpect(status().isOk());
 
         final var userFormDBInJSON = response.andReturn().getResponse().getContentAsString();
-        UserDto responseBody = objectMapper.readValue(userFormDBInJSON, new TypeReference<>() {
+        User responseBody = objectMapper.readValue(userFormDBInJSON, new TypeReference<>() {
         });
 
         //then
@@ -98,101 +124,11 @@ class UserControllerTest {
     }
 
     @Test
-    void shouldAddUsers() throws Exception {
-        //given
-        UserDto userDto = new UserDto(
-                1L, "loginADMIN", "passwordADMIN", Set.of(UserRole.ADMIN)
-        );
-
-        String requestJson = objectMapper.writeValueAsString(userDto);
-
-        //when
-        final var response = mockMvc
-                .perform(MockMvcRequestBuilders
-                        .post("/users")
-                        .contentType("application/json")
-                        .accept("application/json")
-                        .content(requestJson)
-                )
-                .andDo(print())
-                .andExpect(status().isOk());
-
-        final var userFormDBInJSON = response.andReturn().getResponse().getContentAsString();
-        UserDto responseBody = objectMapper.readValue(userFormDBInJSON, new TypeReference<>() {
-        });
-
-        //then
-        assertEquals(userDto.getIdUser(), responseBody.getIdUser());
-        assertEquals(userDto.getLogin(), responseBody.getLogin());
-        assertEquals(userDto.getPassword(), responseBody.getPassword());
-        assertEquals(userDto.getUserRoles(), responseBody.getUserRoles());
-    }
-
-    @Test
-    @Transactional
-    void shouldDeleteUser() throws Exception {
-        //given
-        var SOME_ID = 1L;
-        List<User> userList = List.of(
-                new User(1L, "loginADMIN", "passwordADMIN", Set.of(UserRole.ADMIN)),
-                new User(2L, "loginUSER", "passwordUSER", Set.of(UserRole.USER))
-        );
-
-        userRepository.saveAll(userList);
-
-        //when
-        final var result = mockMvc
-                .perform(MockMvcRequestBuilders
-                        .delete("/users/" + SOME_ID)
-                        .contentType("application/json")
-                        .accept("application/json")
-                )
-                .andDo(print())
-                .andExpect(status().isNoContent());//.andExpect(status().is(204));
-
-        List<User> response = userRepository.findAll();
-
-        //then
-        assertEquals(1, response.size());
-    }
-
-    @Test
-    @Transactional
-    void shouldChosenUserDelete() throws Exception {
-        //given
-        List<User> userList = List.of(
-                new User(1L, "loginADMIN", "passwordADMIN", Set.of(UserRole.ADMIN)),
-                new User(2L, "loginUSER", "passwordUSER", Set.of(UserRole.USER))
-        );
-
-        userRepository.saveAll(userList);
-
-        //when
-        final var result = mockMvc
-                .perform(MockMvcRequestBuilders
-                        .delete("/users/delete/" + userList.get(0).getIdUser())
-                        .contentType("application/json")
-                        .accept("application/json")
-                )
-                .andDo(print())
-                .andExpect(status().isNoContent());//.andExpect(status().is(204));
-
-        List<User> response = userRepository.findAll();
-
-        //then
-        result.andExpect(status().is(204)).andDo(print());
-        assertEquals(1, response.size());
-    }
-
-    //TODO
-    @Test
     void shouldUpdateUser() throws Exception {
         //given
-        UserDto userDto = new UserDto(
-                1L, "loginADMIN", "passwordADMIN", Set.of(UserRole.ADMIN)
-        );
-
-        String requestJson = objectMapper.writeValueAsString(userDto);
+        final User user = new User(1L, "loginADMIN", "passwordADMIN", Set.of(UserRole.ADMIN));
+        userRepository.save(user);
+        String requestJson = objectMapper.writeValueAsString(user);
 
         //when
         final var response = mockMvc
@@ -206,26 +142,41 @@ class UserControllerTest {
                 .andExpect(status().isOk());
 
         final var userFormDBInJSON = response.andReturn().getResponse().getContentAsString();
-        UserDto responseBody = objectMapper.readValue(userFormDBInJSON, new TypeReference<>() {
+        User responseBody = objectMapper.readValue(userFormDBInJSON, new TypeReference<>() {
         });
 
         //then
-        assertEquals(userDto.getIdUser(), responseBody.getIdUser());
-        assertEquals(userDto.getLogin(), responseBody.getLogin());
-        assertEquals(userDto.getPassword(), responseBody.getPassword());
-        assertEquals(userDto.getUserRoles(), responseBody.getUserRoles());
+        assertEquals(user.getIdUser(), responseBody.getIdUser());
+        assertEquals(user.getLogin(), responseBody.getLogin());
+        assertEquals(user.getPassword(), responseBody.getPassword());
+        assertEquals(user.getUserRoles(), responseBody.getUserRoles());
     }
 
     @Test
-    void addRoleToUser() {
+    @Transactional
+    void shouldDeleteUser() throws Exception {
         //given
-        var SOME_ID = 1L;
-        AddRoleRequest addRoleRequest = new AddRoleRequest(UserRole.ADMIN.name());
+        var userIdToFind = 1L;
+        final List<User> userList = List.of(
+                new User(1L, "loginADMIN", "passwordADMIN", Set.of(UserRole.ADMIN)),
+                new User(2L, "loginUSER", "passwordUSER", Set.of(UserRole.USER))
+        );
+        userRepository.saveAll(userList);
 
         //when
+        final var result = mockMvc
+                .perform(MockMvcRequestBuilders
+                        .delete("/users/" + userIdToFind)
+                        .contentType("application/json")
+                        .accept("application/json")
+                )
+                .andDo(print())
+                .andExpect(status().isNoContent());
 
+        List<User> response = userRepository.findAll();
 
         //then
-
+        assertDoesNotThrow(() -> userRepository.findAll());
+        assertEquals(1, response.size());
     }
 }

@@ -25,7 +25,7 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "idUser": 4,
+  "idUser": 1,
   "login": "loginUpdate",
   "password": "passwordUpdate",
   "userRoles": ["ADMIN"]
@@ -35,13 +35,3 @@ Accept: application/json
 DELETE http://localhost:8080/users/3
 Content-Type: application/json
 Accept: application/json
-
-### Delete chosen user
-DELETE http://localhost:8080/users
-Content-Type: application/json
-Accept: application/json
-
-{
-  "login": "loginTestB"
- }
-

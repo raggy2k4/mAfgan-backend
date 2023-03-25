@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -28,7 +27,7 @@ public class UserController {
     private final UserMapper userMapper;
 
     @GetMapping
-    public ResponseEntity<List<UserDto>> getAllUser() { //TODO user czy users?
+    public ResponseEntity<List<UserDto>> getAllUsers() {
         return ResponseEntity.ok(userMapper.toListDto(userService.findAll()));
     }
 
@@ -39,8 +38,8 @@ public class UserController {
     }
 
     @PostMapping()
-    public ResponseEntity<UserDto> addUsers(@RequestBody UserDto newUser) { //TODO user czy users?
-        User user = userService.add(userMapper.toDomain(newUser));
+    public ResponseEntity<UserDto> addUser(@RequestBody UserDto newUser) {
+        User user = userService.save(userMapper.toDomain(newUser));
         return ResponseEntity.ok(userMapper.toDto(user));
     }
     @PutMapping()
@@ -56,5 +55,4 @@ public class UserController {
                 .noContent()
                 .build();
     }
-
 }
