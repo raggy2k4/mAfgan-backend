@@ -14,8 +14,8 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "login": "loginTestA",
-  "password": "passwordTestA",
+  "login": "loginTestB",
+  "password": "passwordTestB",
   "userRoles": ["USER"]
 }
 
@@ -25,14 +25,14 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "idUser": 1,
+  "idUser": 4,
   "login": "loginUpdate",
   "password": "passwordUpdate",
   "userRoles": ["ADMIN"]
 }
 
 ### Delete user
-DELETE http://localhost:8080/users/1
+DELETE http://localhost:8080/users/3
 Content-Type: application/json
 Accept: application/json
 
@@ -42,23 +42,6 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "idUser": 1
+  "login": "loginTestB"
  }
 
-### Add role to user
-POST http://localhost:8080/users/1/roles
-Content-Type: application/json
-Accept: application/json
-
-{
-  "role": "ADMIN"
-}
-
-### Delete role from user
-DELETE http://localhost:8080/users/roles?id=1
-Content-Type: application/json
-Accept: application/json
-
-{
-  "role": "USER"
-}

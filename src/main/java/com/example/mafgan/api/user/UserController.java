@@ -28,18 +28,18 @@ public class UserController {
     private final UserMapper userMapper;
 
     @GetMapping
-    public ResponseEntity<List<UserDto>> getAllUser() {
+    public ResponseEntity<List<UserDto>> getAllUser() { //TODO user czy users?
         return ResponseEntity.ok(userMapper.toListDto(userService.findAll()));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getUserById(@PathVariable Long id) {
-        User user = userService.findById(id);
+        User user = userService.findById(id).get();
         return ResponseEntity.ok(userMapper.toDto(user));
     }
 
     @PostMapping()
-    public ResponseEntity<UserDto> addUsers(@RequestBody UserDto newUser) {
+    public ResponseEntity<UserDto> addUsers(@RequestBody UserDto newUser) { //TODO user czy users?
         User user = userService.add(userMapper.toDomain(newUser));
         return ResponseEntity.ok(userMapper.toDto(user));
     }
@@ -57,29 +57,4 @@ public class UserController {
                 .build();
     }
 
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> deleteChosenUser(@RequestBody UserDto deleteUser) {
-        userService.delete(userMapper.toDomain(deleteUser));
-        return ResponseEntity
-                .noContent()
-                .build();
-    }
-
-    @PostMapping(path = "/{id}/roles")
-    public ResponseEntity<String> addRoleToUser(
-            @PathVariable Long id,
-            @RequestBody AddRoleRequest addRoleRequest
-    ) {
-        userService.addRoleToUser(id, addRoleRequest.role);
-        return ResponseEntity.ok("Dodano role");
-    }
-
-    @DeleteMapping(value = "/roles")
-    public ResponseEntity<String> deleteRole(
-            @RequestParam Long id,
-            @RequestBody AddRoleRequest addRoleRequest
-    ) {
-        userService.deleteRoleInUser(id, addRoleRequest.role);
-        return ResponseEntity.ok("Usunięto role!");
-    }
 }

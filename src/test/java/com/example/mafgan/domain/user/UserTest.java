@@ -8,9 +8,11 @@ class UserTest {
 
     @Test
     void addRole() {
+        fail(); //TODO testy nieskonczone failujemy!
     }
 
     @Test
     void removeRole() {
+        fail(); //TODO testy nieskonczone failujemy!
     }
 }

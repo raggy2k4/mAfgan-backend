@@ -20,6 +20,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+
+//TODO wywalic testy ktore podnosza kostekst springa z folderu test np do folderu integrationtest
 @SpringBootTest
 @AutoConfigureMockMvc
 class UserControllerTest {
@@ -69,7 +71,7 @@ class UserControllerTest {
     void shouldFindUserById() throws Exception {
         //given
         var SOME_ID = 1L;
-        User user = new User(
+        User user = new User( //todo final?
                 1L, "loginADMIN", "passwordADMIN", Set.of(UserRole.ADMIN)
         );
 
@@ -182,7 +184,7 @@ class UserControllerTest {
         assertEquals(1, response.size());
     }
 
-
+    //TODO
     @Test
     void shouldUpdateUser() throws Exception {
         //given

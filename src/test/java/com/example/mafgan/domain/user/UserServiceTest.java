@@ -10,23 +10,19 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
     @Mock
-    UserRepository userRepository;
+    private UserRepository userRepository;
     @InjectMocks
-    UserService userService;
+    private UserService userService;
 
     @Test
     void shouldFindAllUsers() {
@@ -42,34 +38,36 @@ class UserServiceTest {
         List<User> result = userService.findAll();
 
         //then
+        assertNotNull(result);
         assertEquals(userList.size(), result.size());
     }
 
     @Test
     void shouldFindById() {
         //given
-        User user = new User(
-                1L, "loginADMIN", "passwordADMIN", Set.of(UserRole.ADMIN)
-        );
+        Long userIdToFind = 1L;
+        final User userFromDb = new User(1L, "loginADMIN", "passwordADMIN", Set.of(UserRole.ADMIN));
 
-        given(userRepository.findById(anyLong())).willReturn(Optional.of(user));
+//        given(userRepository.findById(userIdToFind)).willReturn(Optional.of(userFromDb));
+        when(userRepository.findById(userIdToFind)).thenReturn(Optional.of(userFromDb));
 
         //when
-        User result = userService.findById(user.getIdUser());
+        User result = userService.findById(userIdToFind).get();
 
         //then
-        assertEquals(user.getIdUser(), result.getIdUser());
-        assertEquals(user.getLogin(), result.getLogin());
-        assertEquals(user.getPassword(), result.getPassword());
-        assertEquals(user.getUserRoles(), result.getUserRoles());
+        assertEquals(userFromDb.getIdUser(), result.getIdUser());
+        assertEquals(userFromDb.getLogin(), result.getLogin());
+        assertEquals(userFromDb.getPassword(), result.getPassword());
+        assertEquals(userFromDb.getUserRoles(), result.getUserRoles());
     }
 
+
+
+    // TODO do przegadania z piotrkiem czy to jakis wielki blad
     @Test
     void shouldAdd() {
         //given
-        User user = new User(
-                1L, "loginADMIN", "passwordADMIN", Set.of(UserRole.ADMIN)
-        );
+        User user = new User(1L, "loginADMIN", "passwordADMIN", Set.of(UserRole.ADMIN));
 
         given(userRepository.save(any())).willReturn(user);
 
@@ -84,11 +82,42 @@ class UserServiceTest {
     }
 
     @Test
+    void addMethodShouldSaveNewUserWhenUserDoesNotExist() {
+        //given
+        final User userToSave = new User(null, "loginADMIN", "passwordADMIN", Set.of(UserRole.ADMIN));
+        final User userSaved = new User(1L, "loginADMIN", "passwordADMIN", Set.of(UserRole.ADMIN));
+
+        given(userRepository.save(userToSave)).willReturn(userSaved);
+
+        //when
+        User result = userService.add(userToSave);
+
+        //then
+        assertNotNull(userSaved);
+        assertNull(userToSave.getIdUser());
+        assertEquals(1L, result.getIdUser());
+        assertEquals(userToSave.getLogin(), result.getLogin());
+        assertEquals(userToSave.getPassword(), result.getPassword());
+        assertEquals(userToSave.getUserRoles(), result.getUserRoles());
+    }
+
+    @Test
+    void addMethodShouldThrowNullPointerExceptionWhenUserIsNull() {
+        //given
+        final User userToSave = null;
+
+        //when
+        //then
+        assertThrows(NullPointerException.class, () -> userService.add(userToSave));
+    }
+
+    // TODO update powinien zwracac usera do aktualzacji ktory zostal wyslany
+    // TODO update powinien zwrocic optional empty jesli usera ni ma
+
+    @Test
     void shouldUpdate() {
         //given
-        User user = new User(
-                1L, "loginADMIN", "passwordADMIN", Set.of(UserRole.ADMIN)
-        );
+        User user = new User(1L, "loginADMIN", "passwordADMIN", Set.of(UserRole.ADMIN));
 
         given(userRepository.save(any())).willReturn(user);
 
@@ -102,10 +131,14 @@ class UserServiceTest {
         assertEquals(user.getUserRoles(), result.getUserRoles());
     }
 
+    //TODO nazwa do poprawy
+    //TODO metada nie rzuca wyjatku jesli user jest
+    //TODO metda rzuca jakis tam wyjatek jesli usera ni ma
+    //TODO
     @Test
     void shouldDeleteById() {
         //given
-        var SOME_ID = 1L;
+        var SOME_ID = 1L; //TODO duze lietery??? private static final sie pisze tak tylko
 
         doNothing().when(userRepository).deleteById(anyLong());
 
@@ -117,28 +150,12 @@ class UserServiceTest {
         verify(userRepository, times(2)).deleteById(SOME_ID);
     }
 
-    @Test
-    void shouldChosenUserDelete() {
-        //given
-        User user = new User(
-                1L, "loginADMIN", "passwordADMIN", Set.of(UserRole.ADMIN)
-        );
-
-        doNothing().when(userRepository).delete(isA(User.class));
-
-        //when
-        userService.delete(user);
-
-        //then
-        assertDoesNotThrow(() -> userService.delete(user));
-        verify(userRepository, times(2)).delete(user);
-    }
 
     @Test
     void shouldCheckUserExistsById() {
         //given
         var SOME_ID = 1L;
-        given(userRepository.existsById(anyLong())).willReturn(true);
+        given(userRepository.existsById(SOME_ID)).willReturn(true);
 
         //when
         boolean result = userService.existsById(SOME_ID);
@@ -149,21 +166,4 @@ class UserServiceTest {
 
     }
 
-    @Test
-    void shouldAddRoleToUser() {
-//        //given
-//        User user = spy(new User(
-//                1L, "loginADMIN", "passwordADMIN", Set.of(UserRole.ADMIN)
-//        ));
-//
-//        given(userRepository.findById(userArgumentCaptor.capture().getIdUser())).willReturn(Optional.of(user));
-
-        //when
-        //userService.addRoleToUser(1L, UserRole.USER.name());
-
-        //then
-//        assertEquals(user.getLogin(), contains("loginADMIN"));
-//        verify(userRepository, times(1)).findById(anyLong());
-
-    }
 }
