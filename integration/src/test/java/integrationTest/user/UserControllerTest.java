@@ -1,4 +1,4 @@
-package com.example.mafgan.api.user;
+package integrationTest.user;
 
 import com.example.mafgan.domain.user.User;
 import com.example.mafgan.domain.user.UserRepository;
@@ -6,7 +6,6 @@ import com.example.mafgan.domain.user.UserRole;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -35,8 +34,7 @@ class UserControllerTest {
     private ObjectMapper objectMapper;
 
     @Test
-    @DisplayName("should add user")
-    void shouldAddUser() throws Exception {
+    void shouldAddUsers() throws Exception {
         //given
         final User user = new User(4L, "loginADMIN", "passwordADMIN", Set.of(UserRole.ADMIN));
         userRepository.save(user);
@@ -65,8 +63,7 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("should get all users")
-    void shouldGetAllUsers() throws Exception {
+    void shouldGetAllUser() throws Exception {
         //given
         final List<User> userList = List.of(
                 new User(1L, "loginADMIN", "passwordADMIN", Set.of(UserRole.ADMIN)),
@@ -100,7 +97,6 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("should find user by id")
     void shouldFindUserById() throws Exception {
         //given
         var userIdToFind = 1L;
@@ -128,7 +124,6 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("should update user")
     void shouldUpdateUser() throws Exception {
         //given
         final User user = new User(1L, "loginADMIN", "passwordADMIN", Set.of(UserRole.ADMIN));
@@ -159,7 +154,6 @@ class UserControllerTest {
 
     @Test
     @Transactional
-    @DisplayName("should delete user")
     void shouldDeleteUser() throws Exception {
         //given
         var userIdToFind = 1L;
