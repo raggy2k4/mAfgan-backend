@@ -29,7 +29,7 @@ class UserServiceTest {
     private UserService userService;
 
     @Test
-    void shouldFindAllUsers() {
+    void findAllUsersMethodShouldReturnAllUsers() {
         //given
         List<User> userList = List.of(
                 new User(1L, "loginADMIN", "passwordADMIN", Set.of(UserRole.ADMIN)),
@@ -65,39 +65,19 @@ class UserServiceTest {
         assertEquals(userFromDb.getUserRoles(), result.getUserRoles());
     }
 
-    // TODO do przegadania z piotrkiem czy to jakis wielki blad
-    @Test
-    void shouldAdd() {
-        //given
-        User user = new User(1L, "loginADMIN", "passwordADMIN", Set.of(UserRole.ADMIN));
-
-        given(userRepository.save(user)).willReturn(user);
-
-        //when
-        User result = userService.save(user);
-
-        //then
-        assertNotNull(result);
-        assertEquals(user.getIdUser(), result.getIdUser());
-        assertEquals(user.getLogin(), result.getLogin());
-        assertEquals(user.getPassword(), result.getPassword());
-        assertEquals(user.getUserRoles(), result.getUserRoles());
-    }
-
     @Test
     void saveMethodShouldSaveNewUserWhenUserDoesNotExist() {
         //given
         final User userToSave = new User(null, "loginADMIN", "passwordADMIN", Set.of(UserRole.ADMIN));
-        final User userSaved = new User(1L, "loginADMIN", "passwordADMIN", Set.of(UserRole.ADMIN));
+        final User savedUser = new User(1L, "loginADMIN", "passwordADMIN", Set.of(UserRole.ADMIN));
 
-        given(userRepository.save(userToSave)).willReturn(userSaved);
+        given(userRepository.save(userToSave)).willReturn(savedUser);
 
         //when
         User result = userService.save(userToSave);
 
         //then
-        assertNotNull(userSaved);
-        assertNull(userToSave.getIdUser());
+        assertNotNull(result);
         assertEquals(1L, result.getIdUser());
         assertEquals(userToSave.getLogin(), result.getLogin());
         assertEquals(userToSave.getPassword(), result.getPassword());
@@ -114,14 +94,13 @@ class UserServiceTest {
         assertThrows(NullPointerException.class, () -> userService.save(userToSave));
     }
 
-    // TODO update powinien zwracac usera do aktualzacji ktory zostal wyslany
-    // TODO update powinien zwrocic optional empty jesli usera ni ma
-
     @Test
     void updateMethodShouldUpdateUserWhenUserExist() {
         //given
+        var userIdToFind = 1L;
         User user = new User(1L, "loginADMIN", "passwordADMIN", Set.of(UserRole.ADMIN));
         given(userRepository.save(user)).willReturn(user);
+        given(userRepository.findById(userIdToFind)).willReturn(Optional.of(user));
 
         //when
         User result = userService.update(user);
@@ -137,14 +116,16 @@ class UserServiceTest {
     @Test
     void updateMethodShouldNotUpdateUserWhenUserNotExist() {
         //given
+        var userIdToFind = 1L;
         User user = new User(1L, "loginADMIN", "passwordADMIN", Set.of(UserRole.ADMIN));
-        given(userRepository.save(user)).willReturn(null);
+        given(userRepository.findById(userIdToFind)).willReturn(Optional.empty());
 
         //when
         User result = userService.update(user);
 
         //then
         assertNull(result);
+        verify(userRepository, times(0)).save(user);
     }
 
     @Test
