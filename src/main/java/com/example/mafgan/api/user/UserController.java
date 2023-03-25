@@ -33,18 +33,18 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getUserById(@PathVariable final Long id) {
-        User user = userService.findById(id).get();
+        final User user = userService.findById(id).get();
         return ResponseEntity.ok(userMapper.toDto(user));
     }
 
     @PostMapping()
     public ResponseEntity<UserDto> addUser(@RequestBody final UserDto newUser) {
-        User user = userService.save(userMapper.toDomain(newUser));
+        final User user = userService.save(userMapper.toDomain(newUser));
         return ResponseEntity.ok(userMapper.toDto(user));
     }
     @PutMapping()
     public ResponseEntity<UserDto> updateUser(@RequestBody final UserDto userUpdate) {
-       User userToUpdate = userService.update(userMapper.toDomain(userUpdate));
+       final User userToUpdate = userService.update(userMapper.toDomain(userUpdate));
        return ResponseEntity.ok(userMapper.toDto(userToUpdate));
     }
 
