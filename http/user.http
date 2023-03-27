@@ -4,7 +4,7 @@ Accept: application/json
 Content-Type: application/json
 
 ### Get user
-GET http://localhost:8080/users/1
+GET http://localhost:8080/users/2
 Content-Type: application/json
 Accept: application/json
 
@@ -14,9 +14,10 @@ Content-Type: application/json
 Accept: application/json
 
 {
+  "id" : 1,
   "login": "loginTestB",
   "password": "passwordTestB",
-  "userRoles": ["USER"]
+  "userRole": ["USER"]
 }
 
 ### Update user
@@ -25,10 +26,10 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "idUser": 1,
+  "id": 4,
   "login": "loginUpdate",
   "password": "passwordUpdate",
-  "userRoles": ["ADMIN"]
+  "userRole": ["ADMIN"]
 }
 
 ### Delete user

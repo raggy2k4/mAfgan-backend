@@ -24,24 +24,25 @@ import java.util.Set;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long idUser;
+    @Column(name = "id")
+    private Long id;
     @Column(name = "login")
     private String login;
     @Column(name = "password")
     private String password;
-    @Column(name = "roles")
+    @Column(name = "role")
     @ElementCollection
-    private Set<UserRole> userRoles = new HashSet<>();
+    private Set<UserRole> userRole = new HashSet<>();
 
     public void addRole(final UserRole userRole) {
-        if (!this.userRoles.contains(userRole)) {
-            this.userRoles.add(userRole);
+        if (!this.userRole.contains(userRole)) {
+            this.userRole.add(userRole);
         }
     }
 
     public void deleteRole(final UserRole userRole) {
-        if (this.userRoles.contains(userRole)) {
-            this.userRoles.remove(userRole);
+        if (this.userRole.contains(userRole)) {
+            this.userRole.remove(userRole);
         }
     }
 }

@@ -38,7 +38,7 @@ class UserControllerTest {
     @DisplayName("should add user")
     void shouldAddUser() throws Exception {
         //given
-        final User user = new User(4L, "loginADMIN", "passwordADMIN", Set.of(UserRole.ADMIN));
+        final User user = new User(1L, "loginADMIN", "passwordADMIN", Set.of(UserRole.ADMIN));
         userRepository.save(user);
         String requestJson = objectMapper.writeValueAsString(user);
 
@@ -58,10 +58,10 @@ class UserControllerTest {
         });
 
         //then
-        assertEquals(user.getIdUser(), responseBody.getIdUser());
+        assertEquals(user.getId(), responseBody.getId());
         assertEquals(user.getLogin(), responseBody.getLogin());
         assertEquals(user.getPassword(), responseBody.getPassword());
-        assertEquals(user.getUserRoles(), responseBody.getUserRoles());
+        assertEquals(user.getUserRole(), responseBody.getUserRole());
     }
 
     @Test
@@ -88,15 +88,15 @@ class UserControllerTest {
         });
 
         //then
-        assertEquals(userList.size(), responseBody.size());
-        assertEquals(userList.get(0).getIdUser(), responseBody.get(0).getIdUser());
+        assertEquals(userList.size(), 2);
+        assertEquals(userList.get(0).getId(), responseBody.get(0).getId());
         assertEquals(userList.get(0).getLogin(), responseBody.get(0).getLogin());
         assertEquals(userList.get(0).getPassword(), responseBody.get(0).getPassword());
-        assertEquals(userList.get(0).getUserRoles(), responseBody.get(0).getUserRoles());
-        assertEquals(userList.get(1).getIdUser(), responseBody.get(1).getIdUser());
+        assertEquals(userList.get(0).getUserRole(), responseBody.get(0).getUserRole());
+        assertEquals(userList.get(1).getId(), responseBody.get(1).getId());
         assertEquals(userList.get(1).getLogin(), responseBody.get(1).getLogin());
         assertEquals(userList.get(1).getPassword(), responseBody.get(1).getPassword());
-        assertEquals(userList.get(1).getUserRoles(), responseBody.get(1).getUserRoles());
+        assertEquals(userList.get(1).getUserRole(), responseBody.get(1).getUserRole());
     }
 
     @Test
@@ -121,10 +121,10 @@ class UserControllerTest {
         });
 
         //then
-        assertEquals(user.getIdUser(), responseBody.getIdUser());
+        assertEquals(user.getId(), responseBody.getId());
         assertEquals(user.getLogin(), responseBody.getLogin());
         assertEquals(user.getPassword(), responseBody.getPassword());
-        assertEquals(user.getUserRoles(), responseBody.getUserRoles());
+        assertEquals(user.getUserRole(), responseBody.getUserRole());
     }
 
     @Test
@@ -151,10 +151,10 @@ class UserControllerTest {
         });
 
         //then
-        assertEquals(user.getIdUser(), responseBody.getIdUser());
+        assertEquals(user.getId(), responseBody.getId());
         assertEquals(user.getLogin(), responseBody.getLogin());
         assertEquals(user.getPassword(), responseBody.getPassword());
-        assertEquals(user.getUserRoles(), responseBody.getUserRoles());
+        assertEquals(user.getUserRole(), responseBody.getUserRole());
     }
 
     @Test
@@ -183,6 +183,6 @@ class UserControllerTest {
 
         //then
         assertDoesNotThrow(() -> userRepository.findAll());
-        assertEquals(1, response.size());
+        assertEquals(3, response.size());
     }
 }

@@ -9,6 +9,6 @@ import java.util.List;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
     @Override
-    @EntityGraph(attributePaths = {"userRoles"})
+    @EntityGraph(attributePaths = {"userRole"})
     List<User> findAll();
 }

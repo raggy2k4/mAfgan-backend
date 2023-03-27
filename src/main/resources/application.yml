@@ -1,27 +1,21 @@
 spring:
   datasource:
     driverClassName: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/postgres #jdbc:postgresql://localhost:5432/postgres?createDatabaseIfNotExist=true
+    url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
     password: postgres27
   jpa:
-    hibernate:
-      ddl-auto: create-drop #mała kontrola przy tworzeniu bazy danych
-    show-sql: true #show the sql actions in the terminal logs
+    show-sql: true
     properties:
       hibernate:
         format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
-  #    properties:
-  #      hibernate:
-  #        dialect: org.hibernate.dialect.PostgreSQLDialect
-  #    defer-datasource-initialization: true #oczytuje sql
   flyway:
     baseline-on-migrate: true
-    enabled: true #endpoint is enabled (this is the default).
-    locations: classpath:db/migration
-
-#    baseline-description: "init"
-#    validate-on-migrate: true
-#    baseline-version: 0
+    enabled: true
+    locations: classpath:db/migration,db/migration/{vendor}
+    user: postgres
+    password: postgres27
+    baseline-version: 0
