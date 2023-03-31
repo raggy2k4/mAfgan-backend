@@ -1,7 +1,9 @@
 package com.example.mafgan.domain.user;
 
+import com.example.mafgan.error.UserNotFoundException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,9 +14,11 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository userRepository;
 
+    @SneakyThrows
     public User save(@NonNull final User user) {
-        if (user.getIdUser() != null) {
-            throw new RuntimeException("User to save should not exist in DB");//TODO wlasny exception
+        if (user.getId() == null) {
+//            throw new RuntimeException("User to save should not exist in DB");//TODO wlasny exception
+            throw new UserNotFoundException("User to save should not exist in DB");//TODO wlasny exception
         }
         return userRepository.save(user);
     }
@@ -33,7 +37,7 @@ public class UserService {
 
     public User update(@NonNull final User user) {
 
-        return userRepository.findById(user.getIdUser())
+        return userRepository.findById(user.getId())
                 .map(u -> userRepository.save(user))
                 .orElse(null);
     }

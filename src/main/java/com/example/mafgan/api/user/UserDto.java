@@ -12,8 +12,8 @@ import java.util.Set;
 @NoArgsConstructor
 @Data
 public class UserDto {
-    Long idUser;
+    Long id;
     String login;
     String password;
-    Set<UserRole> userRoles = new HashSet<>();
+    Set<UserRole> userRole = new HashSet<>();
 }
