@@ -35,7 +35,6 @@ class UserServiceTest {
                 new User(1L, "loginADMIN", "passwordADMIN", Set.of(UserRole.ADMIN)),
                 new User(2L, "loginUSER", "passwordUSER", Set.of(UserRole.USER))
         );
-
         given(userRepository.findAll()).willReturn(userList);
 
         //when

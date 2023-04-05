@@ -26,6 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 //TODO wywalic testy ktore podnosza kostekst springa z folderu test np do folderu integrationtest
 @SpringBootTest
 @AutoConfigureMockMvc
+@Transactional
 class UserControllerTest {
     @Autowired
     UserRepository userRepository;
@@ -39,7 +40,6 @@ class UserControllerTest {
     void shouldAddUser() throws Exception {
         //given
         final User user = new User(1L, "loginADMIN", "passwordADMIN", Set.of(UserRole.ADMIN));
-        userRepository.save(user);
         String requestJson = objectMapper.writeValueAsString(user);
 
         //when
@@ -72,7 +72,6 @@ class UserControllerTest {
                 new User(1L, "loginADMIN", "passwordADMIN", Set.of(UserRole.ADMIN)),
                 new User(2L, "loginUSER", "passwordUSER", Set.of(UserRole.USER))
         );
-        userRepository.saveAll(userList);
 
         //when
         final var response = mockMvc
@@ -105,7 +104,6 @@ class UserControllerTest {
         //given
         var userIdToFind = 1L;
         final User user = new User(1L, "loginADMIN", "passwordADMIN", Set.of(UserRole.ADMIN));
-        userRepository.save(user);
 
         //when
         final var response = mockMvc
@@ -132,7 +130,6 @@ class UserControllerTest {
     void shouldUpdateUser() throws Exception {
         //given
         final User user = new User(1L, "loginADMIN", "passwordADMIN", Set.of(UserRole.ADMIN));
-        userRepository.save(user);
         String requestJson = objectMapper.writeValueAsString(user);
 
         //when
@@ -158,16 +155,10 @@ class UserControllerTest {
     }
 
     @Test
-    @Transactional
     @DisplayName("should delete user")
     void shouldDeleteUser() throws Exception {
         //given
         var userIdToFind = 1L;
-        final List<User> userList = List.of(
-                new User(1L, "loginADMIN", "passwordADMIN", Set.of(UserRole.ADMIN)),
-                new User(2L, "loginUSER", "passwordUSER", Set.of(UserRole.USER))
-        );
-        userRepository.saveAll(userList);
 
         //when
         final var result = mockMvc
@@ -183,6 +174,6 @@ class UserControllerTest {
 
         //then
         assertDoesNotThrow(() -> userRepository.findAll());
-        assertEquals(3, response.size());
+        assertEquals(1, response.size());
     }
 }

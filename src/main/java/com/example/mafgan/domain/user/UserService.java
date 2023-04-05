@@ -17,8 +17,7 @@ public class UserService {
     @SneakyThrows
     public User save(@NonNull final User user) {
         if (user.getId() == null) {
-//            throw new RuntimeException("User to save should not exist in DB");//TODO wlasny exception
-            throw new UserNotFoundException("User to save should not exist in DB");//TODO wlasny exception
+            throw new UserNotFoundException("User to save should not exist in DB");
         }
         return userRepository.save(user);
     }

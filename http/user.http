@@ -36,3 +36,16 @@ Accept: application/json
 DELETE http://localhost:8080/users/3
 Content-Type: application/json
 Accept: application/json
+
+########################################
+### Add Person
+POST http://localhost:8080/person
+Content-Type: application/json
+Accept: application/json
+
+{
+  "id": 1,
+  "nick": "nick",
+  "team": "team",
+  "location": "location"
+}
